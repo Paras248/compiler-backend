@@ -39,6 +39,7 @@ const compile = async (req, res, next) => {
                 fileId,
                 language,
                 filePath,
+                hasInputFile: true,
                 inputPath,
             }).save();
         } else {

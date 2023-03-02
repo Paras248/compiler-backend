@@ -10,6 +10,10 @@ const jobSchema = new mongoose.Schema({
         required: true,
         enum: ['cpp', 'java', 'python', 'c'],
     },
+    hasInputFile: {
+        type: Boolean,
+        default: false,
+    },
     filePath: {
         type: String,
         required: true,
