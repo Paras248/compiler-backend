@@ -1,9 +1,9 @@
 FROM node:alpine
 FROM mongo
 
-RUN apt-get update && \
-    apt-get install -y build-essential && \
-    apt-get install redis
+RUN apt-get install -y build-essential && \
+    apt-get install -y redis
+    
 COPY ./package.json ./
 RUN npm install
 
