@@ -4,8 +4,6 @@ FROM mongo
 RUN apt-get update && \
     apt-get install -y build-essential
 
-RUN apt systemctl start mongod
-
 COPY ./package.json ./
 RUN npm install
 
