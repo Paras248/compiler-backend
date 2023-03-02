@@ -3,6 +3,8 @@ const Job = require('../models/job');
 const {
     executeCppWithoutInputs,
     executeCppWithInputs,
+    executePythonWithInputs,
+    executePythonWithoutInputs,
 } = require('../utils/executeCpp');
 const jobQueue = new Queue('job-queue');
 
@@ -24,11 +26,25 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
             job.completedAt = new Date();
             job.status = 'success';
             await job.save();
-        }
-        if (job.language === 'cpp' && job.hasInputFile) {
+        } else if (job.language === 'cpp' && job.hasInputFile) {
             job.startedAt = new Date();
             job.output = await executeCppWithInputs(
                 job.fileId,
+                job.filePath,
+                job.inputPath
+            );
+            job.completedAt = new Date();
+            job.status = 'success';
+            await job.save();
+        } else if (job.language === 'python' && !job.hasInputFile) {
+            job.startedAt = new Date();
+            job.output = await executePythonWithoutInputs(job.filePath);
+            job.completedAt = new Date();
+            job.status = 'success';
+            await job.save();
+        } else if (job.language === 'python' && job.hasInputFile) {
+            job.startedAt = new Date();
+            job.output = await executePythonWithInputs(
                 job.filePath,
                 job.inputPath
             );
@@ -44,13 +60,13 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     }
 });
 
-jobQueue.on('failed', (error) => {
-    console.log(error.data.id, 'failed', error.failedReason);
-});
-
 const addToJobQueue = async (jobId) => {
     await jobQueue.add({ id: jobId });
 };
+
+jobQueue.on('failed', (error) => {
+    console.log(error.data.id, 'failed', error.failedReason);
+});
 
 module.exports = {
     addToJobQueue,

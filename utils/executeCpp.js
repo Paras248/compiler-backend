@@ -10,7 +10,6 @@ const executeCppWithoutInputs = (fileId, filePath) => {
     return new Promise((resolve, reject) => {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                console.log(error);
                 reject({ error, stderr });
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out`;
@@ -30,7 +29,6 @@ const executeCppWithInputs = (fileId, filePath, inputPath) => {
     return new Promise((resolve, reject) => {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                console.log(error);
                 reject({ error, stderr });
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out < ${inputPath}`;
