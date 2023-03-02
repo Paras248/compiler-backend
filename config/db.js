@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 exports.connectWithDB = async () => {
     await mongoose
-        .connect(process.env.DB_URL, {
+        .connect('mongodb://127.0.0.1:27017/compilerdb', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })

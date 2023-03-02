@@ -2,7 +2,7 @@ FROM node:alpine
 FROM mongo
 
 RUN apt-get update && \
-    apt-get install -y build-essentials
+    apt-get install -y build-essential
 
 RUN apt systemctl start mongod
 
