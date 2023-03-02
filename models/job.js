@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const jobSchema = new mongoose.Schema({
+    fileId: {
+        type: String,
+        required: true,
+    },
     language: {
         type: String,
         required: true,

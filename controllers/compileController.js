@@ -29,12 +29,19 @@ const compile = async (req, res, next) => {
         const fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
         const filePath = generateFile(fileId, code, ext);
+
         let job;
+
         if (input) {
             const inputPath = generateFile(fileId, input, 'txt');
-            job = await new Job({ language, filePath, inputPath }).save();
+            job = await new Job({
+                fileId,
+                language,
+                filePath,
+                inputPath,
+            }).save();
         } else {
-            job = await new Job({ language, filePath }).save();
+            job = await new Job({ fileId, language, filePath }).save();
         }
 
         res.status(200).json({
