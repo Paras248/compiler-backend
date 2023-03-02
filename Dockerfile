@@ -2,8 +2,7 @@ FROM node:alpine
 FROM mongo
 FROM redis:alpine
 
-RUN apt-get update && \
-    apt-get install -y build-essential
+RUN apt-get install -y build-essential
 
 COPY ./package.json ./
 RUN npm install
