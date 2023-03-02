@@ -1,5 +1,6 @@
 FROM node:alpine
 FROM mongo
+FROM redis:alpine
 
 RUN apt-get update && \
     apt-get install -y build-essential
