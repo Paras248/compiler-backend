@@ -1,13 +1,13 @@
 FROM node:alpine
 FROM mongo
-FROM redis:alpine
+FROM redis
 
 RUN apt-get install -y build-essential
 
 COPY ./package.json ./
 RUN npm install
 
-COPY ./ ./
+COPY ./ ./q
 
 CMD ["npm", "start"]
 
