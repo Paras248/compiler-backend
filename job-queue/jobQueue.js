@@ -3,9 +3,12 @@ const Job = require('../models/job');
 const {
     executeCppWithoutInputs,
     executeCppWithInputs,
+} = require('../utils/executeCpp');
+const {
     executePythonWithInputs,
     executePythonWithoutInputs,
-} = require('../utils/executeCpp');
+} = require('../utils/executePython');
+
 const jobQueue = new Queue('job-queue');
 
 const NUM_WORKERS = 5;
