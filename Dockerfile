@@ -1,7 +1,11 @@
 FROM node:alpine
 
-RUN apt-get update && apt-get install -y build-essential && \
-    apt install -y redis
+# RUN apt-get update && \
+#     apt-get install -y build-essential && \
+#     apt install -y redis
+
+RUN apk --update add redis
+RUN apk --update add build-base
 
 COPY ./package.json ./
 RUN npm install
