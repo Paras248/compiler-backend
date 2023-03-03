@@ -1,4 +1,3 @@
-FROM mongo
 FROM node:alpine
 
 RUN apt-get update && apt-get install -y build-essential && \
