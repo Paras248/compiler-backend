@@ -1,10 +1,8 @@
 const app = require('./app');
-const { connectWithDB } = require('./config/db');
 const fs = require('fs');
 const path = require('path');
 const PORT = process.env.PORT || 4000;
 
-connectWithDB();
 const codesPath = path.join(__dirname, 'codes');
 const outputsPath = path.join(__dirname, 'outputs');
 const inputsPath = path.join(__dirname, 'inputs');

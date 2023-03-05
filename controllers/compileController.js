@@ -1,8 +1,14 @@
 const generateFile = require('../utils/generateFile');
 const giveExtensionOfFile = require('../utils/giveExtensionOfFile');
 const { v4: uuid } = require('uuid');
-const Job = require('../models/job');
-const { addToJobQueue } = require('../job-queue/jobQueue');
+const {
+    executeCppWithoutInputs,
+    executeCppWithInputs,
+} = require('../utils/executeCpp');
+const {
+    executePythonWithInputs,
+    executePythonWithoutInputs,
+} = require('../utils/executePython');
 
 const compile = async (req, res, next) => {
     const { code, language, input } = req.body;
@@ -25,36 +31,55 @@ const compile = async (req, res, next) => {
             message: 'Please select an appropriate language',
         });
     }
+    let startedAt;
+    let output;
+    let completedAt;
 
     try {
         const fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
         const filePath = generateFile(fileId, code, ext, 'code');
 
-        let job;
-
         if (input) {
             const inputPath = generateFile(fileId, input, 'txt', 'input');
-            job = await new Job({
-                fileId,
-                language,
-                filePath,
-                hasInputFile: true,
-                inputPath,
-            }).save();
+            if (language === 'cpp') {
+                startedAt = new Date();
+                output = await executeCppWithInputs(
+                    fileId,
+                    filePath,
+                    inputPath
+                );
+                completedAt = new Date();
+            } else if (language === 'python') {
+                startedAt = new Date();
+                output = await executePythonWithInputs(filePath, inputPath);
+                completedAt = new Date();
+            }
         } else {
-            job = await new Job({ fileId, language, filePath }).save();
+            if (language === 'cpp') {
+                startedAt = new Date();
+                output = await executeCppWithoutInputs(fileId, filePath);
+                completedAt = new Date();
+            } else if (language === 'python' && hasInputFile) {
+                startedAt = new Date();
+                output = await executePythonWithoutInputs(filePath);
+                completedAt = new Date();
+            }
         }
-        const jobId = job._id;
-        addToJobQueue(jobId);
         res.status(201).json({
             success: true,
-            jobId,
+            startedAt,
+            completedAt,
+            output,
         });
     } catch (err) {
-        return res.status(500).json({
+        console.log(err);
+        startedAt = new Date();
+        output = JSON.stringify(err);
+        return res.status(400).json({
             success: false,
-            message: JSON.stringify(err),
+            startedAt,
+            output,
         });
     }
 };
