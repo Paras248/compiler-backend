@@ -73,7 +73,6 @@ const compile = async (req, res, next) => {
             output,
         });
     } catch (err) {
-        console.log(err);
         startedAt = new Date();
         output = JSON.stringify(err);
         return res.status(400).json({
