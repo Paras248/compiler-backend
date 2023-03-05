@@ -1,24 +1,27 @@
-FROM node:alpine
+FROM ubuntu:18.04
 
-# RUN apt-get update && \
-#     apt-get install -y build-essential && \
-#     apt install -y redis
+RUN dpkg --configure -a
 
-RUN apk --update add redis
-RUN apk --update add build-base
+ENV PYTHON_VERSION 3.7.7
+ENV PYTHON_PIP_VERSION 20.1
+ENV DEBIAN_FRONTEND noninteractive
 
-COPY ./package.json ./
-RUN npm install
+RUN apt-get update
+RUN apt-get -y install build-essential \
+    default-jre default-jdk nodejs npm \
+    python3-pip python3 curl && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV NODE_VERSION=16.13.2
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 COPY ./ ./
+RUN npm install
 
-EXPOSE 4000
+EXPOSE 3000
 CMD ["npm", "start"]
-
-# RUN apt-get update && \
-#     apt-get install -y openjdk-11-jdk ca-certificates-java && \
-#     apt-get clean && \
-#     update-ca-certificates -f
-# ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
-# RUN export JAVA_HOME
-
