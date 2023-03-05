@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 RUN apt-get -y install build-essential \
-    default-jre default-jdk nodejs npm \
+    default-jre default-jdk nodejs npm redis \
     python3-pip python3 curl && \
     rm -rf /var/lib/apt/lists/*
 
