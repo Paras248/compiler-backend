@@ -9,6 +9,7 @@ const {
     executePythonWithInputs,
     executePythonWithoutInputs,
 } = require('../utils/executePython');
+const { executeCWithoutInputs } = require('../utils/executeC');
 
 const compile = async (req, res, next) => {
     const { code, language, input } = req.body;
@@ -54,15 +55,23 @@ const compile = async (req, res, next) => {
                 startedAt = new Date();
                 output = await executePythonWithInputs(filePath, inputPath);
                 completedAt = new Date();
+            } else if (language === 'C') {
+                startedAt = new Date();
+                output = await executeCWithInputs(filePath);
+                completedAt = new Date();
             }
         } else {
             if (language === 'cpp') {
                 startedAt = new Date();
                 output = await executeCppWithoutInputs(fileId, filePath);
                 completedAt = new Date();
-            } else if (language === 'python' && hasInputFile) {
+            } else if (language === 'python') {
                 startedAt = new Date();
                 output = await executePythonWithoutInputs(filePath);
+                completedAt = new Date();
+            } else if (language === 'C') {
+                startedAt = new Date();
+                output = await executeCWithoutInputs(filePath);
                 completedAt = new Date();
             }
         }
