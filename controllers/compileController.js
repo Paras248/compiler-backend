@@ -18,9 +18,11 @@ const {
     executeJavaWithoutInputs,
     executeJavaWithInputs,
 } = require('../utils/executeJava');
+const removeFiles = require('../utils/removeFiles');
+const giveExtensionOfOutputs = require('../utils/giveExtensionOfOutputs');
 
 const compile = async (req, res, next) => {
-    const { code, language, input, className } = req.body;
+    const { code, language, input } = req.body;
     if (!code) {
         return res.status(400).json({
             success: false,
@@ -47,13 +49,8 @@ const compile = async (req, res, next) => {
     try {
         const fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
-        if (language === 'java' && !className) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide the class name',
-            });
-        }
-        const filePath = generateFile(fileId, code, ext, 'code', className);
+
+        const filePath = generateFile(fileId, code, ext, 'code');
         let inputPath;
         if (input) {
             inputPath = generateFile(fileId, input, 'txt', 'input');
@@ -77,11 +74,7 @@ const compile = async (req, res, next) => {
             if (language === 'java') {
                 startedAt = new Date();
                 startedAt = new Date();
-                output = await executeJavaWithInputs(
-                    filePath,
-                    className,
-                    inputPath
-                );
+                output = await executeJavaWithInputs(filePath, inputPath);
                 completedAt = new Date();
             }
         } else {
@@ -99,10 +92,18 @@ const compile = async (req, res, next) => {
                 completedAt = new Date();
             } else if (language === 'java') {
                 startedAt = new Date();
-                output = await executeJavaWithoutInputs(filePath, className);
+                output = await executeJavaWithoutInputs(filePath);
                 completedAt = new Date();
             }
         }
+
+        await removeFiles(
+            filePath,
+            inputPath,
+            fileId,
+            giveExtensionOfOutputs(language)
+        );
+
         res.status(201).json({
             success: true,
             startedAt,
