@@ -97,7 +97,7 @@ const compile = async (req, res, next) => {
             }
         }
 
-        await removeFiles(
+        removeFiles(
             filePath,
             inputPath,
             fileId,
