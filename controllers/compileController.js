@@ -9,10 +9,17 @@ const {
     executePythonWithInputs,
     executePythonWithoutInputs,
 } = require('../utils/executePython');
-const { executeCWithoutInputs } = require('../utils/executeC');
+const {
+    executeCWithoutInputs,
+    executeCWithInputs,
+} = require('../utils/executeC');
+const {
+    executeJavaWithoutInputs,
+    executeJavaWithInputs,
+} = require('../utils/executeJava');
 
 const compile = async (req, res, next) => {
-    const { code, language, input } = req.body;
+    const { code, language, input, className } = req.body;
     if (!code) {
         return res.status(400).json({
             success: false,
@@ -39,10 +46,16 @@ const compile = async (req, res, next) => {
     try {
         const fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
-        const filePath = generateFile(fileId, code, ext, 'code');
+        const filePath = generateFile(fileId, code, ext, 'code', className);
 
         if (input) {
-            const inputPath = generateFile(fileId, input, 'txt', 'input');
+            const inputPath = generateFile(
+                fileId,
+                input,
+                'txt',
+                'input',
+                className
+            );
             if (language === 'cpp') {
                 startedAt = new Date();
                 output = await executeCppWithInputs(
@@ -55,10 +68,19 @@ const compile = async (req, res, next) => {
                 startedAt = new Date();
                 output = await executePythonWithInputs(filePath, inputPath);
                 completedAt = new Date();
-            } else if (language === 'C') {
+            } else if (language === 'c') {
                 startedAt = new Date();
-                output = await executeCWithInputs(filePath);
+                output = await executeCWithInputs(fileId, filePath, inputPath);
                 completedAt = new Date();
+            }
+            if (language === 'java') {
+                if (!className) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'Please provide the class name',
+                    });
+                }
+                startedAt = new Date();
             }
         } else {
             if (language === 'cpp') {
@@ -69,9 +91,13 @@ const compile = async (req, res, next) => {
                 startedAt = new Date();
                 output = await executePythonWithoutInputs(filePath);
                 completedAt = new Date();
-            } else if (language === 'C') {
+            } else if (language === 'c') {
                 startedAt = new Date();
-                output = await executeCWithoutInputs(filePath);
+                output = await executeCWithoutInputs(fileId, filePath);
+                completedAt = new Date();
+            } else if (language === 'java') {
+                startedAt = new Date();
+                output = await executeJavaWithoutInputs(filePath, className);
                 completedAt = new Date();
             }
         }

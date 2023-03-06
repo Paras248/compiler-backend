@@ -19,13 +19,13 @@ const executeCWithoutInputs = (fileId, filePath) => {
                     stderr && reject(stderr);
                     stdout && resolve(stdout);
                 });
+                setTimeout(() => {
+                    proc.kill(1);
+                    reject(
+                        'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
+                    );
+                }, 30 * 1000);
             }
-            setTimeout(() => {
-                proc.kill(1);
-                reject(
-                    'Your program is paused! make sure you have provided input in case of taking input or the program is paused because of unexpected behaviour'
-                );
-            }, 30 * 1000);
         });
     });
 };
@@ -45,14 +45,14 @@ const executeCWithInputs = (fileId, filePath, inputPath) => {
                     stderr && reject(stderr);
                     stdout && resolve(stdout);
                 });
+                setTimeout(() => {
+                    proc.kill();
+                    reject(
+                        'Your program is paused! make sure you have provided input in case of taking input or the program is paused because of unexpected behaviour'
+                    );
+                }, 30 * 1000);
             }
         });
-        setTimeout(() => {
-            proc.kill();
-            reject(
-                'Your program is paused! make sure you have provided input in case of taking input or the program is paused because of unexpected behaviour'
-            );
-        }, 30 * 1000);
     });
 };
 
