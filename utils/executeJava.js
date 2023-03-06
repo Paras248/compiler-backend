@@ -15,7 +15,7 @@ const executeJavaWithInputs = (filePath, inputPath) => {
             reject(
                 'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
             );
-        }, 30 * 1000);
+        }, 10 * 1000);
     });
 };
 
@@ -32,7 +32,7 @@ const executeJavaWithoutInputs = (filePath) => {
             reject(
                 'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
             );
-        }, 30 * 1000);
+        }, 10 * 1000);
     });
 };
 
