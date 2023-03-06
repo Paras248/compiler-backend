@@ -1,5 +1,6 @@
 const generateFile = require('../utils/generateFile');
 const giveExtensionOfFile = require('../utils/giveExtensionOfFile');
+const fs = require('fs');
 const { v4: uuid } = require('uuid');
 const {
     executeCppWithoutInputs,
@@ -46,16 +47,16 @@ const compile = async (req, res, next) => {
     try {
         const fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
+        if (language === 'java' && !className) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide the class name',
+            });
+        }
         const filePath = generateFile(fileId, code, ext, 'code', className);
-
+        let inputPath;
         if (input) {
-            const inputPath = generateFile(
-                fileId,
-                input,
-                'txt',
-                'input',
-                className
-            );
+            inputPath = generateFile(fileId, input, 'txt', 'input');
             if (language === 'cpp') {
                 startedAt = new Date();
                 output = await executeCppWithInputs(
@@ -74,13 +75,14 @@ const compile = async (req, res, next) => {
                 completedAt = new Date();
             }
             if (language === 'java') {
-                if (!className) {
-                    res.status(400).json({
-                        success: false,
-                        message: 'Please provide the class name',
-                    });
-                }
                 startedAt = new Date();
+                startedAt = new Date();
+                output = await executeJavaWithInputs(
+                    filePath,
+                    className,
+                    inputPath
+                );
+                completedAt = new Date();
             }
         } else {
             if (language === 'cpp') {
