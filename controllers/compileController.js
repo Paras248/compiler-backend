@@ -106,10 +106,11 @@ const compile = async (req, res, next) => {
             true
         );
 
+        const requiredTime = new Date(completedAt - startedAt).getTime();
+
         res.status(200).json({
             success: true,
-            startedAt,
-            completedAt,
+            requiredTime,
             output,
         });
     } catch (err) {
@@ -124,7 +125,6 @@ const compile = async (req, res, next) => {
         );
         return res.status(400).json({
             success: false,
-            startedAt,
             output,
         });
     }
