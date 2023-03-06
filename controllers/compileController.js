@@ -53,7 +53,7 @@ const compile = async (req, res, next) => {
         // note: for better performance make generateFile asynchronous afterwards.
 
         filePath = generateFile(fileId, code, ext, 'code');
-        if (input) {
+        if (input !== '') {
             inputPath = generateFile(fileId, input, 'txt', 'input');
             if (language === 'cpp') {
                 startedAt = new Date();
