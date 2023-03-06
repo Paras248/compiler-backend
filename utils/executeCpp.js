@@ -11,11 +11,11 @@ const executeCppWithoutInputs = (fileId, filePath) => {
         let proc;
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                reject({ error, stderr });
+                reject(stderr);
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out`;
                 proc = exec(cmd, (error, stdout, stderr) => {
-                    error && reject({ error, stderr });
+                    error && reject(stderr);
                     stderr && reject(stderr);
                     stdout && resolve(stdout);
                 });
@@ -24,7 +24,7 @@ const executeCppWithoutInputs = (fileId, filePath) => {
                     reject(
                         'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
                     );
-                }, 10 * 1000);
+                }, 20 * 1000);
             }
         });
     });
@@ -37,11 +37,11 @@ const executeCppWithInputs = (fileId, filePath, inputPath) => {
         let proc;
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                reject({ error, stderr });
+                reject(stderr);
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out < ${inputPath}`;
                 proc = exec(cmd, (error, stdout, stderr) => {
-                    error && reject({ error, stderr });
+                    error && reject(stderr);
                     stderr && reject(stderr);
                     stdout && resolve(stdout);
                 });
@@ -50,7 +50,7 @@ const executeCppWithInputs = (fileId, filePath, inputPath) => {
                     reject(
                         'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
                     );
-                }, 10 * 1000);
+                }, 20 * 1000);
             }
         });
     });

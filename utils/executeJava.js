@@ -6,7 +6,7 @@ const executeJavaWithInputs = (filePath, inputPath) => {
     return new Promise((resolve, reject) => {
         let cmd = `java ${filePath} < ${inputPath}`;
         const proc = exec(cmd, (error, stdout, stderr) => {
-            error && reject({ error, stderr });
+            error && reject(stderr);
             stderr && reject(stderr);
             stdout && resolve(stdout);
         });
@@ -15,7 +15,7 @@ const executeJavaWithInputs = (filePath, inputPath) => {
             reject(
                 'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
             );
-        }, 10 * 1000);
+        }, 20 * 1000);
     });
 };
 
@@ -23,7 +23,7 @@ const executeJavaWithoutInputs = (filePath) => {
     return new Promise((resolve, reject) => {
         let cmd = `java ${filePath}`;
         const proc = exec(cmd, (error, stdout, stderr) => {
-            error && reject({ error, stderr });
+            error && reject(stderr);
             stderr && reject(stderr);
             stdout && resolve(stdout);
         });
@@ -32,7 +32,7 @@ const executeJavaWithoutInputs = (filePath) => {
             reject(
                 'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour'
             );
-        }, 10 * 1000);
+        }, 20 * 1000);
     });
 };
 

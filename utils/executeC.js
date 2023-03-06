@@ -10,12 +10,12 @@ const executeCWithoutInputs = (fileId, filePath) => {
     return new Promise((resolve, reject) => {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                reject({ error, stderr });
+                reject(stderr);
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out`;
                 const proc = exec(cmd, (error, stdout, stderr) => {
                     stdout && resolve(stdout);
-                    error && reject({ error, stderr });
+                    error && reject(stderr);
                     stderr && reject(stderr);
                 });
                 setTimeout(() => {
@@ -36,11 +36,11 @@ const executeCWithInputs = (fileId, filePath, inputPath) => {
         let proc;
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
-                reject({ error, stderr });
+                reject(stderr);
             } else {
                 cmd = `cd ${outputDir} && ./${fileId}.out < ${inputPath}`;
                 proc = exec(cmd, (error, stdout, stderr) => {
-                    error && reject({ error, stderr });
+                    error && reject(stderr);
                     stderr && reject(stderr);
                     stdout && resolve(stdout);
                 });

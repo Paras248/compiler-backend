@@ -115,7 +115,10 @@ const compile = async (req, res, next) => {
         });
     } catch (err) {
         startedAt = new Date();
-        output = JSON.stringify(err);
+        output = err.toString();
+        while (output.includes(filePath)) {
+            output = output.replace(`${filePath}:`, '');
+        }
         removeFiles(
             filePath,
             inputPath,
