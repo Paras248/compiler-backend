@@ -45,13 +45,14 @@ const compile = async (req, res, next) => {
     let startedAt;
     let output;
     let completedAt;
-
+    let inputPath;
+    let filePath;
+    let fileId;
     try {
-        const fileId = uuid();
+        fileId = uuid();
         // note: for better performance make generateFile asynchronous afterwards.
 
-        const filePath = generateFile(fileId, code, ext, 'code');
-        let inputPath;
+        filePath = generateFile(fileId, code, ext, 'code');
         if (input) {
             inputPath = generateFile(fileId, input, 'txt', 'input');
             if (language === 'cpp') {
@@ -101,10 +102,11 @@ const compile = async (req, res, next) => {
             filePath,
             inputPath,
             fileId,
-            giveExtensionOfOutputs(language)
+            giveExtensionOfOutputs(language),
+            true
         );
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             startedAt,
             completedAt,
@@ -113,6 +115,13 @@ const compile = async (req, res, next) => {
     } catch (err) {
         startedAt = new Date();
         output = JSON.stringify(err);
+        removeFiles(
+            filePath,
+            inputPath,
+            fileId,
+            giveExtensionOfOutputs(language),
+            false
+        );
         return res.status(400).json({
             success: false,
             startedAt,
