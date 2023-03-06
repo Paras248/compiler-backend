@@ -23,5 +23,5 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 COPY ./ ./
 RUN npm install
 
-EXPOSE 3000
+EXPOSE 4000
 CMD ["npm", "start"]
