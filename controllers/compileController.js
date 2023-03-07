@@ -40,12 +40,8 @@ const compile = async (req, res, next) => {
                 executeCommand,
                 input
             );
-            fs.unlink(filePath, (err) => {
-                console.log(err);
-            });
-            fs.unlink(outputPath, (err) => {
-                console.log(err);
-            });
+            fs.unlink(filePath, (err) => {});
+            fs.unlink(outputPath, (err) => {});
         }
 
         res.status(200).json({
@@ -53,13 +49,8 @@ const compile = async (req, res, next) => {
             output,
         });
     } catch (err) {
-        fs.unlink(filePath, (err) => {
-            console.log(err);
-        });
-        outputPath &&
-            fs.unlink(outputPath, (err) => {
-                console.log(err);
-            });
+        fs.unlink(filePath, (err) => {});
+        outputPath && fs.unlink(outputPath, (err) => {});
         return res.status(400).json({
             success: false,
             message: err.toString(),
