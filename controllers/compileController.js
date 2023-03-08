@@ -2,7 +2,7 @@ const fs = require('fs');
 const getInfo = require('../utils/getInfo');
 const compileCodeAndExecute = require('../utils/compileCodeAndExecute');
 const executeCode = require('../utils/executeCode');
-const { spawn } = require('child_process');
+const createFile = require('../utils/createFile');
 
 const compile = async (req, res, next) => {
     const { code, language, input } = req.body;
@@ -28,7 +28,7 @@ const compile = async (req, res, next) => {
     const { filePath, outputPath, compileCommand, executeCommand } =
         getInfo(language);
 
-    fs.writeFileSync(filePath, code);
+    await createFile(filePath, code);
 
     try {
         if (!compileCommand) {
