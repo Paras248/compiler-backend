@@ -4,9 +4,11 @@ const executeCode = (executeCommand, executeArgs, input) => {
     return new Promise((resolve, reject) => {
         let error = '',
             output = '';
-        const startedAt = new Date();
+        let startedAt;
         const execProc = spawn(executeCommand, executeArgs || []);
-
+        execProc.on('spawn', () => {
+            startedAt = new Date();
+        });
         const timer = setTimeout(() => {
             execProc.kill(1);
             resolve({
@@ -31,9 +33,8 @@ const executeCode = (executeCommand, executeArgs, input) => {
             error += data.toString();
         });
 
-        const completedAt = new Date();
-
         execProc.on('exit', (err) => {
+            const completedAt = new Date();
             clearTimeout(timer);
             resolve({
                 requiredTime: new Date(completedAt - startedAt).getTime(),
