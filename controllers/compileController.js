@@ -1,8 +1,9 @@
 const fs = require('fs');
 const getInfo = require('../utils/getInfo');
-const compileCodeAndExecute = require('../utils/compileCodeAndExecute');
+const compileCode = require('../utils/compileCode');
 const executeCode = require('../utils/executeCode');
 const createFile = require('../utils/createFile');
+const removeFiles = require('../utils/removeFiles');
 
 const compile = async (req, res, next) => {
     const { code, language, input } = req.body;
@@ -25,32 +26,27 @@ const compile = async (req, res, next) => {
         });
     }
 
-    const { filePath, outputPath, compileCommand, executeCommand } =
-        getInfo(language);
+    const {
+        filePath,
+        outputPath,
+        compileCommand,
+        executeCommand,
+        executeArgs,
+        compileArgs,
+    } = getInfo(language);
 
     await createFile(filePath, code);
 
     try {
-        if (!compileCommand) {
-            output = await executeCode(executeCommand, input);
-            fs.unlink(filePath, () => {});
-        } else {
-            output = await compileCodeAndExecute(
-                compileCommand,
-                executeCommand,
-                input
-            );
-            fs.unlink(filePath, (err) => {});
-            fs.unlink(outputPath, (err) => {});
-        }
-
+        compileCommand && (await compileCode(compileCommand, compileArgs));
+        output = await executeCode(executeCommand, executeArgs, input);
+        await removeFiles(filePath, outputPath);
         res.status(200).json({
             success: true,
             output,
         });
     } catch (err) {
-        fs.unlink(filePath, (err) => {});
-        outputPath && fs.unlink(outputPath, (err) => {});
+        await removeFiles(filePath, outputPath);
         return res.status(400).json({
             success: false,
             message: err.toString(),

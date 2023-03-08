@@ -1,12 +1,11 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
-const executeCode = (executeCommand, input) => {
+const executeCode = (executeCommand, executeArgs, input) => {
     return new Promise((resolve, reject) => {
-        const execProc = exec(executeCommand, (error, stdout, stderr) => {
-            stdout && resolve(stdout);
-            error && reject(error);
-            stderr && reject(stderr);
-        });
+        let error = '',
+            output = '';
+        const execProc = spawn(executeCommand, executeArgs || []);
+
         const timer = setTimeout(() => {
             execProc.kill(1);
             resolve(
@@ -20,6 +19,21 @@ const executeCode = (executeCommand, input) => {
             });
             execProc.stdin.end();
         }
+
+        execProc.stdin.on('error', (err) => {});
+
+        execProc.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        execProc.stderr.on('data', (data) => {
+            error += data.toString();
+        });
+
+        execProc.on('exit', (err) => {
+            clearTimeout(timer);
+            resolve({ output, error });
+        });
     });
 };
 
