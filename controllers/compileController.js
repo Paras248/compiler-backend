@@ -39,11 +39,17 @@ const compile = async (req, res, next) => {
 
     try {
         compileCommand && (await compileCode(compileCommand, compileArgs));
-        output = await executeCode(executeCommand, executeArgs, input);
+        const { output, error, requiredTime } = await executeCode(
+            executeCommand,
+            executeArgs,
+            input
+        );
         await removeFiles(filePath, outputPath);
         res.status(200).json({
             success: true,
+            requiredTime,
             output,
+            error,
         });
     } catch (err) {
         await removeFiles(filePath, outputPath);
