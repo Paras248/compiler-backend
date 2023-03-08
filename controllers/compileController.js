@@ -53,6 +53,10 @@ const compile = async (req, res, next) => {
         });
     } catch (err) {
         fs.unlink(filePath, () => {});
+        let error = err.toString();
+        while (error.includes(filePath)) {
+            error = error.replace(`${filePath}:`, '');
+        }
         return res.status(400).json({
             success: false,
             message: err.toString(),
