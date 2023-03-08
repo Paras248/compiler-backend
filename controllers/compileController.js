@@ -43,6 +43,7 @@ const compile = async (req, res, next) => {
             executeArgs,
             input
         );
+
         fs.unlink(filePath, () => {});
         outputPath && fs.unlink(outputPath, () => {});
         res.status(200).json({
@@ -59,7 +60,7 @@ const compile = async (req, res, next) => {
         }
         return res.status(400).json({
             success: false,
-            message: err.toString(),
+            message: error,
         });
     }
 };
