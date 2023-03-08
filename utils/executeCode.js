@@ -12,7 +12,7 @@ const executeCode = (executeCommand, executeArgs, input) => {
             resolve({
                 error: 'Your program is paused! It can be paused if it expects input and input not provided program may contain a infinite loop or due to some unexpected behaviour',
             });
-        }, 10000);
+        }, 30000);
 
         if (input) {
             input.split('\n').forEach((line) => {

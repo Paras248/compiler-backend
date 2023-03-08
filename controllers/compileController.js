@@ -3,7 +3,6 @@ const getInfo = require('../utils/getInfo');
 const compileCode = require('../utils/compileCode');
 const executeCode = require('../utils/executeCode');
 const createFile = require('../utils/createFile');
-const removeFiles = require('../utils/removeFiles');
 
 const compile = async (req, res, next) => {
     const { code, language, input } = req.body;
@@ -44,7 +43,8 @@ const compile = async (req, res, next) => {
             executeArgs,
             input
         );
-        await removeFiles(filePath, outputPath);
+        fs.unlink(filePath, () => {});
+        outputPath && fs.unlink(outputPath, () => {});
         res.status(200).json({
             success: true,
             requiredTime,
@@ -52,7 +52,7 @@ const compile = async (req, res, next) => {
             error,
         });
     } catch (err) {
-        await removeFiles(filePath, outputPath);
+        fs.unlink(filePath, () => {});
         return res.status(400).json({
             success: false,
             message: err.toString(),
