@@ -42,7 +42,7 @@ const quotes = [
 const getQuotes = (req, res, next) => {
     res.status(200).json({
         success: true,
-        quote: quotes[Math.floor(Math.random() * 39)],
+        quote: quotes[parseInt(Math.random() * 38)],
     });
 };
 
