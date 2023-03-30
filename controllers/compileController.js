@@ -47,7 +47,6 @@ const compile = async (req, res, next) => {
         outputPath && fs.unlink(outputPath, () => {});
         while (error.includes(filePath)) {
             error = error.replace(filePath, '');
-            console.log(error);
         }
         res.status(200).json({
             success: true,
