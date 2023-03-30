@@ -38,14 +38,17 @@ const compile = async (req, res, next) => {
 
     try {
         compileCommand && (await compileCode(compileCommand, compileArgs));
-        const { output, error, requiredTime } = await executeCode(
+        let { output, error, requiredTime } = await executeCode(
             executeCommand,
             executeArgs,
             input
         );
-
         fs.unlink(filePath, () => {});
         outputPath && fs.unlink(outputPath, () => {});
+        while (error.includes(filePath)) {
+            error = error.replace(filePath, '');
+            console.log(error);
+        }
         res.status(200).json({
             success: true,
             requiredTime,
@@ -58,9 +61,9 @@ const compile = async (req, res, next) => {
         while (error.includes(filePath)) {
             error = error.replace(`${filePath}:`, '');
         }
-        return res.status(400).json({
+        return res.status(200).json({
             success: false,
-            message: error,
+            error,
         });
     }
 };
